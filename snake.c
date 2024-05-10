@@ -177,99 +177,99 @@ void displayNumber(int num) { // Se encarga de mostrar los numeros en la matriz 
 }
 
 // Extender la serpiente
-void extendSnake() {
-    if (snakeLength + 2 <= MAX_SNAKE_LENGTH) {
-        for (int j = 0; j < 2; j++) {
-            Position newHead = snake[0];
-            switch (snake[0].dir) {
+void extendSnake() { // se encarga de extender la longitud de la serpiente en el juego
+    if (snakeLength + 2 <= MAX_SNAKE_LENGTH) { // Se verifica si la serpiente puede crecer sin superar la longitud máxima permitida (MAX_SNAKE_LENGTH). La serpiente se extenderá por dos segmentos si esta condición es verdadera.
+        for (int j = 0; j < 2; j++) { // Este bucle for se repite dos veces, indicando que la serpiente se extenderá por dos segmentos en esta función.
+            Position newHead = snake[0]; // Se crea una nueva variable newHead de tipo Position, y se inicializa con la posición de la cabeza actual de la serpiente (snake[0]).
+            switch (snake[0].dir) { // Este bloque switch ajusta las coordenadas de newHead basándose en la dirección actual de la cabeza de la serpiente. Modifica la coordenada x o y para mover la cabeza en la dirección deseada.
                 case UP:    newHead.y--; break;
                 case DOWN:  newHead.y++; break;
                 case LEFT:  newHead.x--; break;
                 case RIGHT: newHead.x++; break;
             }
-            for (int i = snakeLength; i > 0; i--) {
-                snake[i] = snake[i - 1];
+            for (int i = snakeLength; i > 0; i--) { // Este bucle for mueve cada segmento de la serpiente una posición hacia atrás en el arreglo, para hacer espacio para el nuevo segmento de cabeza en la primera posición.
+                snake[i] = snake[i - 1]; 
             }
-            snake[0] = newHead;
-            snakeLength++;
+            snake[0] = newHead; // La nueva posición calculada para la cabeza se asigna al primer elemento del arreglo snake, efectivamente moviendo la cabeza de la serpiente a su nueva posición.
+            snakeLength++; // Incrementa la variable snakeLength, que lleva la cuenta de cuántos segmentos tiene la serpiente.
         }
         contador++;
-        displayNumber(contador);  
+        displayNumber(contador); // Al final de cada extensión, el contador se incrementa, y el nuevo puntaje se muestra en la pantalla usando la función displayNumber.
     }
 }
 
 // Navegar por la serpiente
 void navigateSnake() {
-    if (*d_pad_up && snake[0].dir != DOWN) {
-        snake[0].dir = UP;
-    } else if (*d_pad_down && snake[0].dir != UP) {
-        snake[0].dir = DOWN;
-    } else if (*d_pad_left && snake[0].dir != RIGHT) {
-        snake[0].dir = LEFT;
-    } else if (*d_pad_right && snake[0].dir != LEFT) {
-        snake[0].dir = RIGHT;
+    if (*d_pad_up && snake[0].dir != DOWN) { // Si el botón de arriba está presionado y la serpiente no se mueve hacia abajo
+        snake[0].dir = UP; // Cambia la dirección de la serpiente a hacia arriba
+    } else if (*d_pad_down && snake[0].dir != UP) { // Si el botón de abajo está presionado y la serpiente no se mueve hacia arriba
+        snake[0].dir = DOWN; // Cambia la dirección de la serpiente a hacia abajo
+    } else if (*d_pad_left && snake[0].dir != RIGHT) { // Si el botón izquierdo está presionado y la serpiente no se mueve hacia la derecha
+        snake[0].dir = LEFT; // Cambia la dirección de la serpiente a hacia la izquierda
+    } else if (*d_pad_right && snake[0].dir != LEFT) { // Si el botón derecho está presionado y la serpiente no se mueve hacia la izquierda
+        snake[0].dir = RIGHT; // Cambia la dirección de la serpiente a hacia la derecha
     }
 
-    Position nextPosition = snake[0];
-    switch (nextPosition.dir) {
-        case UP:    nextPosition.y = (nextPosition.y - 1 + LED_MATRIX_HEIGHT) % LED_MATRIX_HEIGHT; break;
-        case DOWN:  nextPosition.y = (nextPosition.y + 1) % LED_MATRIX_HEIGHT; break;
-        case LEFT:  nextPosition.x = (nextPosition.x - 1 + LED_MATRIX_WIDTH) % LED_MATRIX_WIDTH; break;
-        case RIGHT: nextPosition.x = (nextPosition.x + 1) % LED_MATRIX_WIDTH; break;
+    Position nextPosition = snake[0]; // Crea una copia de la posición actual de la cabeza de la serpiente
+    switch (nextPosition.dir) { // Calcula la nueva posición de la cabeza de la serpiente en función de su dirección
+        case UP:    nextPosition.y = (nextPosition.y - 1 + LED_MATRIX_HEIGHT) % LED_MATRIX_HEIGHT; break; // Mueve hacia arriba, ciclo en el borde superior
+        case DOWN:  nextPosition.y = (nextPosition.y + 1) % LED_MATRIX_HEIGHT; break; // Mueve hacia abajo, ciclo en el borde inferior
+        case LEFT:  nextPosition.x = (nextPosition.x - 1 + LED_MATRIX_WIDTH) % LED_MATRIX_WIDTH; break; // Mueve hacia la izquierda, ciclo en el borde izquierdo
+        case RIGHT: nextPosition.x = (nextPosition.x + 1) % LED_MATRIX_WIDTH; break; // Mueve hacia la derecha, ciclo en el borde derecho
     }
     
-    if (nextPosition.x == purpleApple.x && nextPosition.y == purpleApple.y) {
-        game_over = 1; 
-        return;
+    if (nextPosition.x == purpleApple.x && nextPosition.y == purpleApple.y) { // Verifica si la serpiente ha chocado con una manzana morada
+        game_over = 1; // Si es así, termina el juego
+        return; // Sale de la función
     }
 
-    if (nextPosition.x == apple.x && nextPosition.y == apple.y) {
-        extendSnake();
-        createApple();
-        createPurpleApple(); 
-    } else {
-        for (int i = snakeLength - 1; i > 0; i--) {
+    if (nextPosition.x == apple.x && nextPosition.y == apple.y) { // Verifica si la serpiente ha chocado con una manzana regular
+        extendSnake(); // Extiende la longitud de la serpiente
+        createApple(); // Crea una nueva manzana regular en una posición aleatoria
+        createPurpleApple(); // Crea una nueva manzana morada en una posición aleatoria
+    } else { // Mueve cada segmento de la serpiente a la posición del segmento anterior para avanzar
+        for (int i = snakeLength - 1; i > 0; i--) { 
             snake[i] = snake[i - 1];
         }
-        snake[0] = nextPosition;
+        snake[0] = nextPosition; // Establece la nueva posición de la cabeza de la serpiente
     }
 }
 
 // Detectar colisión de la serpiente consigo misma
-int detectCollision() {
-    for (int i = 1; i < snakeLength; i++) {
-        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
-            return 1;
+int detectCollision() { // Definición de la función que detecta colisión de la serpiente consigo misma.
+    for (int i = 1; i < snakeLength; i++) { // Itera sobre todos los segmentos del cuerpo de la serpiente, empezando desde el segundo segmento
+        if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) { // Compara la posición de la cabeza de la serpiente (snake[0]) con cada uno de los otros segmentos del cuerpo. Si las coordenadas de la cabeza coinciden con las de cualquier otro segmento, hay una colisión.
+            return 1; // Devuelve 1, indicando que se ha detectado una colisión
         }
     }
-    return 0;
+    return 0;// Si se completa el bucle y no se detectan colisiones, devuelve 0.
 }
 
 // Pausa
-void pause() {
-    for (volatile unsigned int i = 0; i < DELAY; ++i) {
+void pause() { // Definición de la función que crea una pausa o retardo en el juego.
+    for (volatile unsigned int i = 0; i < DELAY; ++i) { // Inicia un bucle que itera un número de veces definido por la constante DELAY. El cuerpo del bucle está vacío. Simplemente se utiliza el bucle para consumir tiempo y crear un retardo
     }
 }
 
 // Función principal
-int main() {
-    setupSnake();
-    createApple();
-    createPurpleApple();
+int main() { // Definición de la función principal del programa, que controla el flujo del juego.
+    setupSnake(); // Inicializa la serpiente en el centro de la matriz de LEDs.
+    createApple(); // Crea una manzana regular en una posición aleatoria.
+    createPurpleApple(); // Crea una manzana morada en otra posición aleatoria.
 
-    while (!game_over) {
-        navigateSnake();
-        if (detectCollision()) {
-            game_over = 1;
-            break;
+    while (!game_over) { // Inicia un bucle que se ejecuta mientras el juego no haya terminado.
+        navigateSnake(); // Actualiza la dirección de la serpiente basada en la entrada del usuario y la mueve.
+        if (detectCollision()) { // Verifica si la serpiente ha colisionado consigo misma
+            game_over = 1; // Si detecta una colisión, marca el juego como terminado.
+            break; // Sale del bucle mientras.
         }
 
-        resetLEDs();
-        renderSnake();
-        renderApple();
-        renderPurpleApple();
-        pause();
+        resetLEDs(); // Apaga todos los LEDs para preparar la siguiente renderización.
+        renderSnake(); // Dibuja la serpiente en la matriz de LEDs.
+        renderApple(); // Dibuja la manzana regular.
+        renderPurpleApple(); // Dibuja la manzana morada.
+        pause(); // Pausa el juego para hacer que la velocidad de movimiento de la serpiente sea jugable.
     }
 
-    return 0;
+    return 0;// Una vez que el juego ha terminado, retorna 0 para indicar que el programa ha terminado correctamente.
 }
