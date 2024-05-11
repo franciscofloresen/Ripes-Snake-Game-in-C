@@ -210,6 +210,32 @@ void navigateSnake() {
         snake[0].dir = RIGHT; // Cambia la dirección de la serpiente a hacia la derecha
     }
 
+/*
+Ejemplo de Movimiento hacia Arriba (UP)
+Supongamos que la matriz de LEDs tiene una altura (LED_MATRIX_HEIGHT) de 25. Si la serpiente se mueve hacia arriba desde la fila 0, la siguiente posición en y sería -1 
+(ya que se está moviendo hacia arriba y se reduce la coordenada y).
+
+Sin el uso del módulo, la coordenada y sería simplemente -1, lo cual no es una posición válida en la matriz y podría causar un error.
+Aplicando el módulo: (nextPosition.y - 1 + LED_MATRIX_HEIGHT) % LED_MATRIX_HEIGHT
+Si nextPosition.y es 0, entonces la operación sería (-1 + 25) % 25 = 24 % 25 = 24.
+Esto coloca la cabeza de la serpiente en la fila 24, que es el extremo opuesto de la matriz, creando un efecto de "envoltura".
+Ejemplo de Movimiento hacia Abajo (DOWN)
+Si la serpiente se encuentra en la última fila (por ejemplo, en la fila 24) y se mueve hacia abajo, la siguiente posición en y sería 25.
+
+Aplicando el módulo: (nextPosition.y + 1) % LED_MATRIX_HEIGHT
+Si nextPosition.y es 24, entonces la operación sería (24 + 1) % 25 = 25 % 25 = 0.
+Esto coloca la cabeza de la serpiente en la fila 0, nuevamente creando un efecto de "envoltura".
+
+
+Ejemplo de Movimientos Hacia los Lados (LEFT y RIGHT)
+La lógica es similar para los movimientos laterales. Si la serpiente se mueve a la izquierda desde la columna 0 o a la derecha desde la última columna, 
+el uso del módulo garantiza que la serpiente aparezca en el lado opuesto de la matriz.
+
+Este uso del módulo asegura que el área de juego sea tratada como un toroide (una superficie donde los bordes opuestos están conectados). 
+En la práctica, esto significa que no hay "bordes reales" en el área de juego, ya que cruzar un borde simplemente lleva a la serpiente al lado opuesto de la matriz, 
+permitiendo movimientos continuos y sin interrupciones.
+*/
+
     Position nextPosition = snake[0]; // Crea una copia de la posición actual de la cabeza de la serpiente
     switch (nextPosition.dir) { // Calcula la nueva posición de la cabeza de la serpiente en función de su dirección
         case UP:    nextPosition.y = (nextPosition.y - 1 + LED_MATRIX_HEIGHT) % LED_MATRIX_HEIGHT; break; // Mueve hacia arriba, ciclo en el borde superior
