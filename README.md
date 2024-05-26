@@ -1,6 +1,7 @@
 # Ripes-Snake-Game-in-C
 
-![Snake Game](contents/Screenshot 2024-05-25 235904.png)
+![Snake Game](contents/Captura%20de%20pantalla%202024-05-26%20a%20la(s)%2012.19.23%20a.m..png)
+
 
 This repository contains a Snake game implementation in C, designed to be used with Ripes software. The project showcases the use of cache memory and the integration of input/output systems.
 
